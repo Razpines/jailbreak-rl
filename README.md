@@ -55,3 +55,12 @@ Make sure CUDA 12.x runtime DLLs are on your PATH:
 ```powershell
 $env:PATH = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1\bin;$env:PATH"
 ```
+
+## Stage 1 (blackbox)
+Stage 1 uses a single prompt from `data/stage1_prompt.txt`. The suffix policy is an
+N×E embedding matrix projected to tokens using a generic model (default `distilgpt2`),
+so the target model remains a pure text-only blackbox.
+
+```powershell
+python -m rljb.train_stage1 --model-path models\llama-3.1-8b-instruct-q6_k.gguf
+```

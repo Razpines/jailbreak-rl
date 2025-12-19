@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 from typing import List
 
@@ -39,6 +39,9 @@ class RefusalResult:
     generic_hit: bool
     structured: bool
     word_count: int
+    refusal_penalty: float = 0.0
+    length_reward: float = 0.0
+    structure_bonus: float = 0.0
 
     def as_dict(self) -> dict:
         return {
@@ -47,6 +50,9 @@ class RefusalResult:
             "generic_hit": self.generic_hit,
             "structured": self.structured,
             "word_count": self.word_count,
+            "refusal_penalty": self.refusal_penalty,
+            "length_reward": self.length_reward,
+            "structure_bonus": self.structure_bonus,
         }
 
 
@@ -90,5 +96,14 @@ def detect_refusal(text: str) -> RefusalResult:
 
 def refusal_reward(text: str) -> tuple[float, RefusalResult]:
     result = detect_refusal(text)
-    reward = 1.0 if not result.is_refusal else -1.0
-    return reward, result
+    refusal_penalty = -1.0 if result.is_refusal else 0.0
+    length_reward = 0.01 * result.word_count
+    structure_bonus = 0.2 if result.structured else 0.0
+    reward = refusal_penalty + length_reward + structure_bonus
+    shaped = replace(
+        result,
+        refusal_penalty=refusal_penalty,
+        length_reward=length_reward,
+        structure_bonus=structure_bonus,
+    )
+    return reward, shaped

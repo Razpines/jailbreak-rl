@@ -24,12 +24,13 @@ class LlamaEnv:
         model_path: str,
         *,
         n_ctx: int = 2048,
+        n_gpu_layers: int = 0,
         temperature: float = 0.2,
         top_p: float = 0.95,
         stop: Optional[Iterable[str]] = None,
         max_tokens: int = 256,
     ) -> None:
-        self.model = Llama(model_path=model_path, n_ctx=n_ctx)
+        self.model = Llama(model_path=model_path, n_ctx=n_ctx, n_gpu_layers=n_gpu_layers)
         self.temperature = temperature
         self.top_p = top_p
         self.stop = list(stop) if stop else None
